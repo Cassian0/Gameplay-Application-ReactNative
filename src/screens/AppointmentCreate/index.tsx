@@ -4,6 +4,11 @@ import {
 } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
+import uuid from 'react-native-uuid';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useNavigation } from '@react-navigation/native';
 
 import { CategorySelect } from '../../components/CategorySelect';
 import { Background } from '../../components/Background';
@@ -16,6 +21,7 @@ import { GuildProps } from '../../components/Guild';
 import { GuildIcon } from '../../components/GuildIcon';
 import { Guilds } from '../Guilds'
 
+import { COLLECTION_APPOINTMENTS } from '../../configs/database';
 import { theme } from '../../global/styles/theme';
 import { styles } from './styles';
 
@@ -23,6 +29,14 @@ export function AppointmentCreate() {
   const [category, setCategory] = useState('');
   const [openModalGuilds, setOpenModalGuilds] = useState(false);
   const [guild, setGuild] = useState<GuildProps>({} as GuildProps);
+
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [hour, setHour] = useState('');
+  const [minute, setMinute] = useState('');
+  const [description, setDescription] = useState('');
+
+  const navigation = useNavigation();
 
   function handleOpenGuilds() {
     setOpenModalGuilds(true);
@@ -39,6 +53,23 @@ export function AppointmentCreate() {
 
   function handleCategorySelect(categoryId: string) {
     setCategory(categoryId);
+  }
+
+  async function handleSave() {
+    const newAppointment = {
+      id: uuid.v4(),
+      guild,
+      category,
+      data: `${day}/${month} às ${hour}:${minute}h`,
+      description
+    }
+
+    const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
+    const appointments = storage ? JSON.parse(storage) : [];
+
+    await AsyncStorage.setItem(COLLECTION_APPOINTMENTS, JSON.stringify([...appointments, newAppointment]));
+
+    navigation.navigate('Home');
   }
 
   return (
@@ -69,7 +100,7 @@ export function AppointmentCreate() {
             <RectButton onPress={handleOpenGuilds}>
               <View style={styles.select}>
                 {
-                  guild.icon ? <GuildIcon /> : <View style={styles.image} />
+                  guild.icon ? <GuildIcon guildId={guild.id} iconId={guild.icon} /> : <View style={styles.image} />
                 }
 
                 <View style={styles.selectBody}>
@@ -94,11 +125,15 @@ export function AppointmentCreate() {
                 </Text>
 
                 <View style={styles.column}>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    onChangeText={setDay}
+                    maxLength={2} />
                   <Text style={styles.divider}>
                     /
                   </Text>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    onChangeText={setMonth}
+                    maxLength={2} />
                 </View>
               </View>
               <View>
@@ -107,11 +142,15 @@ export function AppointmentCreate() {
                 </Text>
 
                 <View style={styles.column}>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    onChangeText={setHour}
+                    maxLength={2} />
                   <Text style={styles.divider}>
                     :
                   </Text>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    onChangeText={setMinute}
+                    maxLength={2} />
                 </View>
               </View>
 
@@ -125,13 +164,16 @@ export function AppointmentCreate() {
               </Text>
             </View>
             <TextArea
+              onChangeText={setDescription}
               multiline
               maxLength={100}
               numberOfLines={5}
               autoCorrect={false}
             />
             <View style={styles.footer}>
-              <Button title='Agendar' />
+              <Button
+              onPress={handleSave}
+              title='Agendar' />
             </View>
           </View>
         </ScrollView>

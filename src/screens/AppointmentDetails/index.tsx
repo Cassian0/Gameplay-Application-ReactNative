@@ -45,8 +45,7 @@ export function AppointmentDetails() {
           </BorderlessButton>
         }
       />
-      {/*ImageBackground=
-      Conseguimos utilizar uma imagem como background*/}
+
       <ImageBackground
         source={BannerImg}
         style={styles.banner}
@@ -59,8 +58,8 @@ export function AppointmentDetails() {
             É hoje que vamos chegar ao challenger sem perder uma partida da md10
           </Text>
         </View>
-
       </ImageBackground>
+
       <ListHeader
         title='Jogadores'
         subTitle='Total 3'
@@ -71,7 +70,7 @@ export function AppointmentDetails() {
         renderItem={({ item }) => (
           <Member data={item} />
         )}
-        ItemSeparatorComponent={() => <ListDivider />}
+        ItemSeparatorComponent={() => <ListDivider isCentered />}
         style={styles.members}
       />
 

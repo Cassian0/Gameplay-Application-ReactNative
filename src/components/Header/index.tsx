@@ -13,8 +13,7 @@ import { theme } from '../../global/styles/theme';
 
 type Props = {
   title: String;
-  action?: ReactNode; // Definimos que sera um nó do react onde podemos passar de 
-  //forma dinâmica inserindo esse action apenas na interface desejada.
+  action?: ReactNode; 
 }
 
 export function Header({ title, action }: Props) {
