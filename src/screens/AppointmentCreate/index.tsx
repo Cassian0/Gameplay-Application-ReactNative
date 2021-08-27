@@ -60,7 +60,7 @@ export function AppointmentCreate() {
       id: uuid.v4(),
       guild,
       category,
-      data: `${day}/${month} às ${hour}:${minute}h`,
+      date: `${day}/${month} às ${hour}:${minute}h`,
       description
     }
 
